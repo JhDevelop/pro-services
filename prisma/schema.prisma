@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model company {
+  id_company Int      @id @default(autoincrement())
+  name       String   @db.VarChar(50)
+  id_user    Int
+  id_status  Int
+  status     status   @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+  users      users    @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction)
+  offert     offert[]
+}
+
+model company_education {
+  id_company_education   Int    @id @default(autoincrement())
+  code_company_education String @db.VarChar(50)
+  name                   String @db.VarChar(50)
+  id_status              Int
+  status                 status @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model offert {
+  id_offert   Int     @id @default(autoincrement())
+  title       String  @db.VarChar(50)
+  description String  @db.VarChar(500)
+  id_company  Int
+  id_status   Int
+  company     company @relation(fields: [id_company], references: [id_company], onDelete: NoAction, onUpdate: NoAction)
+  status      status  @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model offert_applied {
+  id_offert_applied Int    @id @default(autoincrement())
+  id_offert         Int
+  id_person         Int
+  id_status         Int
+  status            status @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model offert_skill {
+  id_offert_skill Int @id @default(autoincrement())
+  id_offert       Int
+  id_skill        Int
+}
+
+model person {
+  id_person Int         @id @default(autoincrement())
+  name      String      @db.VarChar(50)
+  surname   String      @db.VarChar(50)
+  email     String      @db.VarChar(50)
+  phone     String      @db.VarChar(50)
+  id_user   Int
+  id_status Int
+  status    status      @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+  users     users       @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction)
+  person_cv person_cv[]
+}
+
+model person_skill {
+  id_person_skill Int @id @default(autoincrement())
+  id_person       Int
+  id_skill        Int
+}
+
+model person_skill_detail {
+  id_person_skill_detail Int @id @default(autoincrement())
+  id_person_skill        Int
+  id_skill_level         Int
+}
+
+model skill {
+  id_skill  Int    @id @default(autoincrement())
+  name      String @db.VarChar(50)
+  id_status Int
+  status    status @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model skill_level {
+  id_skill_level Int    @id @default(autoincrement())
+  skill_level    String @db.VarChar(50)
+  id_status      Int
+  status         status @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model status {
+  id_status         Int                 @id @default(autoincrement())
+  status            String              @db.VarChar(50)
+  company           company[]
+  company_education company_education[]
+  offert            offert[]
+  offert_applied    offert_applied[]
+  person            person[]
+  person_cv         person_cv[]
+  skill             skill[]
+  skill_level       skill_level[]
+  users             users[]
+}
+
+model users {
+  id_user   Int       @id @default(autoincrement())
+  username  String    @db.VarChar(50)
+  password  String    @db.VarChar(50)
+  id_status Int
+  company   company[]
+  person    person[]
+  status    status    @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model person_cv {
+  id_person_cv Int    @id @default(autoincrement())
+  id_person    Int
+  presentation String @db.VarChar(1000)
+  id_status    Int
+  person       person @relation(fields: [id_person], references: [id_person], onDelete: NoAction, onUpdate: NoAction)
+  status       status @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction)
+}
